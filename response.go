@@ -2,7 +2,6 @@ package fcm
 
 // Response represents the FCM server's response to the application
 // server's sent message.
-// easyjson:json
 type Response struct {
 	MulticastID  int64    `json:"multicast_id"`
 	Success      int      `json:"success"`
@@ -13,7 +12,6 @@ type Response struct {
 }
 
 // Result represents the status of a processed message.
-// easyjson:json
 type Result struct {
 	MessageID      string `json:"message_id"`
 	RegistrationID string `json:"registration_id"`

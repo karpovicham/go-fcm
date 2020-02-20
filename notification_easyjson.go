@@ -40,30 +40,8 @@ func easyjson9806e1DecodeGithubComHumansNetFcm(in *jlexer.Lexer, out *Notificati
 			out.Title = string(in.String())
 		case "body":
 			out.Body = string(in.String())
-		case "android_channel_id":
-			out.AndroidChannelId = string(in.String())
-		case "icon":
-			out.Icon = string(in.String())
-		case "sound":
-			out.Sound = string(in.String())
-		case "badge":
-			out.Badge = string(in.String())
-		case "tag":
-			out.Tag = string(in.String())
-		case "color":
-			out.Color = string(in.String())
-		case "click_action":
-			out.ClickAction = string(in.String())
-		case "subtitle":
-			out.Subtitle = string(in.String())
-		case "body_loc_key":
-			out.BodyLocKey = string(in.String())
-		case "body_loc_args":
-			out.BodyLocArgs = string(in.String())
-		case "title_loc_key":
-			out.TitleLocKey = string(in.String())
-		case "title_loc_args":
-			out.TitleLocArgs = string(in.String())
+		case "image":
+			out.Image = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -94,125 +72,15 @@ func easyjson9806e1EncodeGithubComHumansNetFcm(out *jwriter.Writer, in Notificat
 		}
 		out.String(string(in.Body))
 	}
-	if in.AndroidChannelId != "" {
-		const prefix string = ",\"android_channel_id\":"
+	if in.Image != "" {
+		const prefix string = ",\"image\":"
 		if first {
 			first = false
 			out.RawString(prefix[1:])
 		} else {
 			out.RawString(prefix)
 		}
-		out.String(string(in.AndroidChannelId))
-	}
-	if in.Icon != "" {
-		const prefix string = ",\"icon\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.Icon))
-	}
-	if in.Sound != "" {
-		const prefix string = ",\"sound\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.Sound))
-	}
-	if in.Badge != "" {
-		const prefix string = ",\"badge\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.Badge))
-	}
-	if in.Tag != "" {
-		const prefix string = ",\"tag\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.Tag))
-	}
-	if in.Color != "" {
-		const prefix string = ",\"color\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.Color))
-	}
-	if in.ClickAction != "" {
-		const prefix string = ",\"click_action\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.ClickAction))
-	}
-	if in.Subtitle != "" {
-		const prefix string = ",\"subtitle\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.Subtitle))
-	}
-	if in.BodyLocKey != "" {
-		const prefix string = ",\"body_loc_key\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.BodyLocKey))
-	}
-	if in.BodyLocArgs != "" {
-		const prefix string = ",\"body_loc_args\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.BodyLocArgs))
-	}
-	if in.TitleLocKey != "" {
-		const prefix string = ",\"title_loc_key\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.TitleLocKey))
-	}
-	if in.TitleLocArgs != "" {
-		const prefix string = ",\"title_loc_args\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.TitleLocArgs))
+		out.String(string(in.Image))
 	}
 	out.RawByte('}')
 }
@@ -259,51 +127,28 @@ func easyjson9806e1DecodeGithubComHumansNetFcm1(in *jlexer.Lexer, out *Message) 
 			continue
 		}
 		switch key {
-		case "to":
-			out.Token = string(in.String())
-		case "registration_ids":
+		case "name":
+			out.Name = string(in.String())
+		case "data":
 			if in.IsNull() {
 				in.Skip()
-				out.RegistrationIDs = nil
 			} else {
-				in.Delim('[')
-				if out.RegistrationIDs == nil {
-					if !in.IsDelim(']') {
-						out.RegistrationIDs = make([]string, 0, 4)
-					} else {
-						out.RegistrationIDs = []string{}
-					}
+				in.Delim('{')
+				if !in.IsDelim('}') {
+					out.Data = make(map[string]string)
 				} else {
-					out.RegistrationIDs = (out.RegistrationIDs)[:0]
+					out.Data = nil
 				}
-				for !in.IsDelim(']') {
+				for !in.IsDelim('}') {
+					key := string(in.String())
+					in.WantColon()
 					var v1 string
 					v1 = string(in.String())
-					out.RegistrationIDs = append(out.RegistrationIDs, v1)
+					(out.Data)[key] = v1
 					in.WantComma()
 				}
-				in.Delim(']')
+				in.Delim('}')
 			}
-		case "condition":
-			out.Condition = string(in.String())
-		case "collapse_key":
-			out.CollapseKey = string(in.String())
-		case "priority":
-			out.Priority = string(in.String())
-		case "content_available":
-			out.ContentAvailable = bool(in.Bool())
-		case "mutable_content":
-			out.MutableContent = bool(in.Bool())
-		case "delay_while_idle":
-			out.DelayWhileIdle = bool(in.Bool())
-		case "time_to_live":
-			out.TimeToLive = int(in.Int())
-		case "restricted_package_name":
-			out.RestrictedPackageName = string(in.String())
-		case "delivery_receipt_requested":
-			out.DeliveryReceiptRequested = bool(in.Bool())
-		case "dry_run":
-			out.DryRun = bool(in.Bool())
 		case "notification":
 			if in.IsNull() {
 				in.Skip()
@@ -314,32 +159,22 @@ func easyjson9806e1DecodeGithubComHumansNetFcm1(in *jlexer.Lexer, out *Message) 
 				}
 				(*out.Notification).UnmarshalEasyJSON(in)
 			}
-		case "data":
+		case "android":
 			if in.IsNull() {
 				in.Skip()
+				out.Android = nil
 			} else {
-				in.Delim('{')
-				if !in.IsDelim('}') {
-					out.Data = make(map[string]interface{})
-				} else {
-					out.Data = nil
+				if out.Android == nil {
+					out.Android = new(AndroidConfig)
 				}
-				for !in.IsDelim('}') {
-					key := string(in.String())
-					in.WantColon()
-					var v2 interface{}
-					if m, ok := v2.(easyjson.Unmarshaler); ok {
-						m.UnmarshalEasyJSON(in)
-					} else if m, ok := v2.(json.Unmarshaler); ok {
-						_ = m.UnmarshalJSON(in.Raw())
-					} else {
-						v2 = in.Interface()
-					}
-					(out.Data)[key] = v2
-					in.WantComma()
-				}
-				in.Delim('}')
+				(*out.Android).UnmarshalEasyJSON(in)
 			}
+		case "token":
+			out.Token = string(in.String())
+		case "topic":
+			out.Topic = string(in.String())
+		case "condition":
+			out.Condition = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -354,140 +189,11 @@ func easyjson9806e1EncodeGithubComHumansNetFcm1(out *jwriter.Writer, in Message)
 	out.RawByte('{')
 	first := true
 	_ = first
-	if in.Token != "" {
-		const prefix string = ",\"to\":"
+	if in.Name != "" {
+		const prefix string = ",\"name\":"
 		first = false
 		out.RawString(prefix[1:])
-		out.String(string(in.Token))
-	}
-	if len(in.RegistrationIDs) != 0 {
-		const prefix string = ",\"registration_ids\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		{
-			out.RawByte('[')
-			for v3, v4 := range in.RegistrationIDs {
-				if v3 > 0 {
-					out.RawByte(',')
-				}
-				out.String(string(v4))
-			}
-			out.RawByte(']')
-		}
-	}
-	if in.Condition != "" {
-		const prefix string = ",\"condition\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.Condition))
-	}
-	if in.CollapseKey != "" {
-		const prefix string = ",\"collapse_key\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.CollapseKey))
-	}
-	if in.Priority != "" {
-		const prefix string = ",\"priority\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.Priority))
-	}
-	if in.ContentAvailable {
-		const prefix string = ",\"content_available\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Bool(bool(in.ContentAvailable))
-	}
-	if in.MutableContent {
-		const prefix string = ",\"mutable_content\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Bool(bool(in.MutableContent))
-	}
-	if in.DelayWhileIdle {
-		const prefix string = ",\"delay_while_idle\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Bool(bool(in.DelayWhileIdle))
-	}
-	if in.TimeToLive != 0 {
-		const prefix string = ",\"time_to_live\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Int(int(in.TimeToLive))
-	}
-	if in.RestrictedPackageName != "" {
-		const prefix string = ",\"restricted_package_name\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.RestrictedPackageName))
-	}
-	if in.DeliveryReceiptRequested {
-		const prefix string = ",\"delivery_receipt_requested\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Bool(bool(in.DeliveryReceiptRequested))
-	}
-	if in.DryRun {
-		const prefix string = ",\"dry_run\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Bool(bool(in.DryRun))
-	}
-	if in.Notification != nil {
-		const prefix string = ",\"notification\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		(*in.Notification).MarshalEasyJSON(out)
+		out.String(string(in.Name))
 	}
 	if len(in.Data) != 0 {
 		const prefix string = ",\"data\":"
@@ -499,25 +205,69 @@ func easyjson9806e1EncodeGithubComHumansNetFcm1(out *jwriter.Writer, in Message)
 		}
 		{
 			out.RawByte('{')
-			v5First := true
-			for v5Name, v5Value := range in.Data {
-				if v5First {
-					v5First = false
+			v2First := true
+			for v2Name, v2Value := range in.Data {
+				if v2First {
+					v2First = false
 				} else {
 					out.RawByte(',')
 				}
-				out.String(string(v5Name))
+				out.String(string(v2Name))
 				out.RawByte(':')
-				if m, ok := v5Value.(easyjson.Marshaler); ok {
-					m.MarshalEasyJSON(out)
-				} else if m, ok := v5Value.(json.Marshaler); ok {
-					out.Raw(m.MarshalJSON())
-				} else {
-					out.Raw(json.Marshal(v5Value))
-				}
+				out.String(string(v2Value))
 			}
 			out.RawByte('}')
 		}
+	}
+	if in.Notification != nil {
+		const prefix string = ",\"notification\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		(*in.Notification).MarshalEasyJSON(out)
+	}
+	if in.Android != nil {
+		const prefix string = ",\"android\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		(*in.Android).MarshalEasyJSON(out)
+	}
+	if in.Token != "" {
+		const prefix string = ",\"token\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Token))
+	}
+	if in.Topic != "" {
+		const prefix string = ",\"topic\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Topic))
+	}
+	if in.Condition != "" {
+		const prefix string = ",\"condition\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Condition))
 	}
 	out.RawByte('}')
 }
@@ -544,4 +294,807 @@ func (v *Message) UnmarshalJSON(data []byte) error {
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Message) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjson9806e1DecodeGithubComHumansNetFcm1(l, v)
+}
+func easyjson9806e1DecodeGithubComHumansNetFcm2(in *jlexer.Lexer, out *LightSettings) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeString()
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "Color":
+			(out.Color).UnmarshalEasyJSON(in)
+		case "light_on_duration":
+			out.LightOnDuration = string(in.String())
+		case "light_off_duration":
+			out.LightOffDuration = string(in.String())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjson9806e1EncodeGithubComHumansNetFcm2(out *jwriter.Writer, in LightSettings) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"Color\":"
+		out.RawString(prefix[1:])
+		(in.Color).MarshalEasyJSON(out)
+	}
+	if in.LightOnDuration != "" {
+		const prefix string = ",\"light_on_duration\":"
+		out.RawString(prefix)
+		out.String(string(in.LightOnDuration))
+	}
+	if in.LightOffDuration != "" {
+		const prefix string = ",\"light_off_duration\":"
+		out.RawString(prefix)
+		out.String(string(in.LightOffDuration))
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v LightSettings) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjson9806e1EncodeGithubComHumansNetFcm2(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v LightSettings) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjson9806e1EncodeGithubComHumansNetFcm2(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *LightSettings) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjson9806e1DecodeGithubComHumansNetFcm2(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *LightSettings) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjson9806e1DecodeGithubComHumansNetFcm2(l, v)
+}
+func easyjson9806e1DecodeGithubComHumansNetFcm3(in *jlexer.Lexer, out *Color) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeString()
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "red":
+			out.Red = float32(in.Float32())
+		case "green":
+			out.Green = float32(in.Float32())
+		case "blue":
+			out.Blue = float32(in.Float32())
+		case "alpha":
+			out.Alpha = float32(in.Float32())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjson9806e1EncodeGithubComHumansNetFcm3(out *jwriter.Writer, in Color) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	if in.Red != 0 {
+		const prefix string = ",\"red\":"
+		first = false
+		out.RawString(prefix[1:])
+		out.Float32(float32(in.Red))
+	}
+	if in.Green != 0 {
+		const prefix string = ",\"green\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Float32(float32(in.Green))
+	}
+	if in.Blue != 0 {
+		const prefix string = ",\"blue\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Float32(float32(in.Blue))
+	}
+	if in.Alpha != 0 {
+		const prefix string = ",\"alpha\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Float32(float32(in.Alpha))
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v Color) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjson9806e1EncodeGithubComHumansNetFcm3(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v Color) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjson9806e1EncodeGithubComHumansNetFcm3(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *Color) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjson9806e1DecodeGithubComHumansNetFcm3(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *Color) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjson9806e1DecodeGithubComHumansNetFcm3(l, v)
+}
+func easyjson9806e1DecodeGithubComHumansNetFcm4(in *jlexer.Lexer, out *AndroidNotification) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeString()
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "title":
+			out.Title = string(in.String())
+		case "body":
+			out.Body = string(in.String())
+		case "icon":
+			out.Icon = string(in.String())
+		case "color":
+			out.Color = string(in.String())
+		case "sound":
+			out.Sound = string(in.String())
+		case "tag":
+			out.Tag = string(in.String())
+		case "click_action":
+			out.ClickAction = string(in.String())
+		case "body_loc_key":
+			out.BodyLocKey = string(in.String())
+		case "body_loc_args":
+			if in.IsNull() {
+				in.Skip()
+				out.BodyLocArgs = nil
+			} else {
+				in.Delim('[')
+				if out.BodyLocArgs == nil {
+					if !in.IsDelim(']') {
+						out.BodyLocArgs = make([]string, 0, 4)
+					} else {
+						out.BodyLocArgs = []string{}
+					}
+				} else {
+					out.BodyLocArgs = (out.BodyLocArgs)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v3 string
+					v3 = string(in.String())
+					out.BodyLocArgs = append(out.BodyLocArgs, v3)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "title_loc_key":
+			out.TitleLocKey = string(in.String())
+		case "title_loc_args":
+			if in.IsNull() {
+				in.Skip()
+				out.TitleLocArgs = nil
+			} else {
+				in.Delim('[')
+				if out.TitleLocArgs == nil {
+					if !in.IsDelim(']') {
+						out.TitleLocArgs = make([]string, 0, 4)
+					} else {
+						out.TitleLocArgs = []string{}
+					}
+				} else {
+					out.TitleLocArgs = (out.TitleLocArgs)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v4 string
+					v4 = string(in.String())
+					out.TitleLocArgs = append(out.TitleLocArgs, v4)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "channel_id":
+			out.ChannelId = string(in.String())
+		case "ticker":
+			out.Ticker = string(in.String())
+		case "sticky":
+			out.Sticky = bool(in.Bool())
+		case "event_name":
+			out.EventName = string(in.String())
+		case "local_only":
+			out.LocalOnly = bool(in.Bool())
+		case "notification_priority":
+			out.NotificationPriority = NotificationPriority(in.String())
+		case "default_sound":
+			out.DefaultSound = bool(in.Bool())
+		case "default_vibrate_timings":
+			out.DefaultVibrateTimings = bool(in.Bool())
+		case "default_light_settings":
+			out.DefaultLightSettings = bool(in.Bool())
+		case "vibrate_timings":
+			if in.IsNull() {
+				in.Skip()
+				out.VibrateTimings = nil
+			} else {
+				in.Delim('[')
+				if out.VibrateTimings == nil {
+					if !in.IsDelim(']') {
+						out.VibrateTimings = make([]string, 0, 4)
+					} else {
+						out.VibrateTimings = []string{}
+					}
+				} else {
+					out.VibrateTimings = (out.VibrateTimings)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v5 string
+					v5 = string(in.String())
+					out.VibrateTimings = append(out.VibrateTimings, v5)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "visibility":
+			out.Visibility = Visibility(in.String())
+		case "notification_count":
+			out.NotificationCount = int(in.Int())
+		case "light_settings":
+			if in.IsNull() {
+				in.Skip()
+				out.LightSettings = nil
+			} else {
+				if out.LightSettings == nil {
+					out.LightSettings = new(LightSettings)
+				}
+				(*out.LightSettings).UnmarshalEasyJSON(in)
+			}
+		case "image":
+			out.Image = string(in.String())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjson9806e1EncodeGithubComHumansNetFcm4(out *jwriter.Writer, in AndroidNotification) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	if in.Title != "" {
+		const prefix string = ",\"title\":"
+		first = false
+		out.RawString(prefix[1:])
+		out.String(string(in.Title))
+	}
+	if in.Body != "" {
+		const prefix string = ",\"body\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Body))
+	}
+	if in.Icon != "" {
+		const prefix string = ",\"icon\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Icon))
+	}
+	if in.Color != "" {
+		const prefix string = ",\"color\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Color))
+	}
+	if in.Sound != "" {
+		const prefix string = ",\"sound\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Sound))
+	}
+	if in.Tag != "" {
+		const prefix string = ",\"tag\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Tag))
+	}
+	if in.ClickAction != "" {
+		const prefix string = ",\"click_action\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.ClickAction))
+	}
+	if in.BodyLocKey != "" {
+		const prefix string = ",\"body_loc_key\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.BodyLocKey))
+	}
+	if len(in.BodyLocArgs) != 0 {
+		const prefix string = ",\"body_loc_args\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		{
+			out.RawByte('[')
+			for v6, v7 := range in.BodyLocArgs {
+				if v6 > 0 {
+					out.RawByte(',')
+				}
+				out.String(string(v7))
+			}
+			out.RawByte(']')
+		}
+	}
+	if in.TitleLocKey != "" {
+		const prefix string = ",\"title_loc_key\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.TitleLocKey))
+	}
+	if len(in.TitleLocArgs) != 0 {
+		const prefix string = ",\"title_loc_args\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		{
+			out.RawByte('[')
+			for v8, v9 := range in.TitleLocArgs {
+				if v8 > 0 {
+					out.RawByte(',')
+				}
+				out.String(string(v9))
+			}
+			out.RawByte(']')
+		}
+	}
+	if in.ChannelId != "" {
+		const prefix string = ",\"channel_id\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.ChannelId))
+	}
+	if in.Ticker != "" {
+		const prefix string = ",\"ticker\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Ticker))
+	}
+	if in.Sticky {
+		const prefix string = ",\"sticky\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Bool(bool(in.Sticky))
+	}
+	if in.EventName != "" {
+		const prefix string = ",\"event_name\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.EventName))
+	}
+	if in.LocalOnly {
+		const prefix string = ",\"local_only\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Bool(bool(in.LocalOnly))
+	}
+	if in.NotificationPriority != "" {
+		const prefix string = ",\"notification_priority\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.NotificationPriority))
+	}
+	if in.DefaultSound {
+		const prefix string = ",\"default_sound\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Bool(bool(in.DefaultSound))
+	}
+	if in.DefaultVibrateTimings {
+		const prefix string = ",\"default_vibrate_timings\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Bool(bool(in.DefaultVibrateTimings))
+	}
+	if in.DefaultLightSettings {
+		const prefix string = ",\"default_light_settings\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Bool(bool(in.DefaultLightSettings))
+	}
+	if len(in.VibrateTimings) != 0 {
+		const prefix string = ",\"vibrate_timings\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		{
+			out.RawByte('[')
+			for v10, v11 := range in.VibrateTimings {
+				if v10 > 0 {
+					out.RawByte(',')
+				}
+				out.String(string(v11))
+			}
+			out.RawByte(']')
+		}
+	}
+	if in.Visibility != "" {
+		const prefix string = ",\"visibility\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Visibility))
+	}
+	if in.NotificationCount != 0 {
+		const prefix string = ",\"notification_count\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Int(int(in.NotificationCount))
+	}
+	if in.LightSettings != nil {
+		const prefix string = ",\"light_settings\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		(*in.LightSettings).MarshalEasyJSON(out)
+	}
+	if in.Image != "" {
+		const prefix string = ",\"image\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Image))
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v AndroidNotification) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjson9806e1EncodeGithubComHumansNetFcm4(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v AndroidNotification) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjson9806e1EncodeGithubComHumansNetFcm4(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *AndroidNotification) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjson9806e1DecodeGithubComHumansNetFcm4(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *AndroidNotification) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjson9806e1DecodeGithubComHumansNetFcm4(l, v)
+}
+func easyjson9806e1DecodeGithubComHumansNetFcm5(in *jlexer.Lexer, out *AndroidConfig) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeString()
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "collapse_key":
+			out.CollapseKey = string(in.String())
+		case "priority":
+			out.Priority = AndroidMessagePriority(in.String())
+		case "ttl":
+			out.Ttl = string(in.String())
+		case "restricted_package_name":
+			out.RestrictedPackageName = string(in.String())
+		case "data":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				in.Delim('{')
+				if !in.IsDelim('}') {
+					out.Data = make(map[string]string)
+				} else {
+					out.Data = nil
+				}
+				for !in.IsDelim('}') {
+					key := string(in.String())
+					in.WantColon()
+					var v12 string
+					v12 = string(in.String())
+					(out.Data)[key] = v12
+					in.WantComma()
+				}
+				in.Delim('}')
+			}
+		case "notification":
+			if in.IsNull() {
+				in.Skip()
+				out.Notification = nil
+			} else {
+				if out.Notification == nil {
+					out.Notification = new(AndroidNotification)
+				}
+				(*out.Notification).UnmarshalEasyJSON(in)
+			}
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjson9806e1EncodeGithubComHumansNetFcm5(out *jwriter.Writer, in AndroidConfig) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	if in.CollapseKey != "" {
+		const prefix string = ",\"collapse_key\":"
+		first = false
+		out.RawString(prefix[1:])
+		out.String(string(in.CollapseKey))
+	}
+	if in.Priority != "" {
+		const prefix string = ",\"priority\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Priority))
+	}
+	if in.Ttl != "" {
+		const prefix string = ",\"ttl\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Ttl))
+	}
+	if in.RestrictedPackageName != "" {
+		const prefix string = ",\"restricted_package_name\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.RestrictedPackageName))
+	}
+	if len(in.Data) != 0 {
+		const prefix string = ",\"data\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		{
+			out.RawByte('{')
+			v13First := true
+			for v13Name, v13Value := range in.Data {
+				if v13First {
+					v13First = false
+				} else {
+					out.RawByte(',')
+				}
+				out.String(string(v13Name))
+				out.RawByte(':')
+				out.String(string(v13Value))
+			}
+			out.RawByte('}')
+		}
+	}
+	if in.Notification != nil {
+		const prefix string = ",\"notification\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		(*in.Notification).MarshalEasyJSON(out)
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v AndroidConfig) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjson9806e1EncodeGithubComHumansNetFcm5(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v AndroidConfig) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjson9806e1EncodeGithubComHumansNetFcm5(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *AndroidConfig) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjson9806e1DecodeGithubComHumansNetFcm5(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *AndroidConfig) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjson9806e1DecodeGithubComHumansNetFcm5(l, v)
 }

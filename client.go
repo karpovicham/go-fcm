@@ -2,6 +2,7 @@ package fcm
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/pkg/errors"
 	"github.com/valyala/fasthttp"
@@ -50,9 +51,9 @@ var _ Client = &SimpleClient{}
 
 // NewClient creates new Firebase Cloud Messaging SimpleClient based on API key and
 // with default endpoint and http client.
-func NewClient(apiKey string, opts ...Option) (*SimpleClient, error) {
+func NewClient(apiKey string, opts ...Option) *SimpleClient {
 	if apiKey == "" {
-		return nil, ErrInvalidAPIKey
+		panic(ErrInvalidAPIKey)
 	}
 	c := &SimpleClient{
 		apiKey:   []byte("key=" + apiKey),
@@ -61,11 +62,11 @@ func NewClient(apiKey string, opts ...Option) (*SimpleClient, error) {
 	}
 	for _, o := range opts {
 		if err := o(c); err != nil {
-			return nil, err
+			panic(fmt.Sprintf("failed to apply client options: %v", err))
 		}
 	}
 
-	return c, nil
+	return c
 }
 
 var (

@@ -97,19 +97,19 @@ type Visibility string
 type NotificationPriority string
 
 const (
-	NotificationPriorityUnspecified = "PRIORITY_UNSPECIFIED"
-	NotificationPriorityMin         = "PRIORITY_MIN"
-	NotificationPriorityLow         = "PRIORITY_LOW"
-	NotificationPriorityDefault     = "PRIORITY_DEFAULT"
-	NotificationPriorityHigh        = "PRIORITY_HIGH"
-	NotificationPriorityMax         = "PRIORITY_MAX"
+	NotificationPriorityUnspecified NotificationPriority = "PRIORITY_UNSPECIFIED"
+	NotificationPriorityMin         NotificationPriority = "PRIORITY_MIN"
+	NotificationPriorityLow         NotificationPriority = "PRIORITY_LOW"
+	NotificationPriorityDefault     NotificationPriority = "PRIORITY_DEFAULT"
+	NotificationPriorityHigh        NotificationPriority = "PRIORITY_HIGH"
+	NotificationPriorityMax         NotificationPriority = "PRIORITY_MAX"
 
-	VisibilityPrivate = "PRIVATE"
-	VisibilityPublic  = "PUBLIC"
-	VisibilitySecret  = "SECRET"
+	VisibilityPrivate Visibility = "PRIVATE"
+	VisibilityPublic  Visibility = "PUBLIC"
+	VisibilitySecret  Visibility = "SECRET"
 
-	AndroidMessagePriorityNormal = "NORMAL"
-	AndroidMessagePriorityHigh   = "HIGH"
+	AndroidMessagePriorityNormal AndroidMessagePriority = "NORMAL"
+	AndroidMessagePriorityHigh   AndroidMessagePriority = "HIGH"
 )
 
 // Validate returns an error if the message is not well-formed.

@@ -1,9 +1,8 @@
 package fcm
 
 import (
+	"errors"
 	"strings"
-
-	"github.com/pkg/errors"
 )
 
 var (

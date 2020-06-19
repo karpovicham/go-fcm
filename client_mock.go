@@ -15,7 +15,7 @@ import (
 type ClientMock struct {
 	t minimock.Tester
 
-	funcSend          func(ctx context.Context, msg *Message) (rp1 *Response, err error)
+	funcSend          func(ctx context.Context, msg *Message) (err error)
 	inspectFuncSend   func(ctx context.Context, msg *Message)
 	afterSendCounter  uint64
 	beforeSendCounter uint64
@@ -60,7 +60,6 @@ type ClientMockSendParams struct {
 
 // ClientMockSendResults contains results of the Client.Send
 type ClientMockSendResults struct {
-	rp1 *Response
 	err error
 }
 
@@ -96,7 +95,7 @@ func (mmSend *mClientMockSend) Inspect(f func(ctx context.Context, msg *Message)
 }
 
 // Return sets up results that will be returned by Client.Send
-func (mmSend *mClientMockSend) Return(rp1 *Response, err error) *ClientMock {
+func (mmSend *mClientMockSend) Return(err error) *ClientMock {
 	if mmSend.mock.funcSend != nil {
 		mmSend.mock.t.Fatalf("ClientMock.Send mock is already set by Set")
 	}
@@ -104,12 +103,12 @@ func (mmSend *mClientMockSend) Return(rp1 *Response, err error) *ClientMock {
 	if mmSend.defaultExpectation == nil {
 		mmSend.defaultExpectation = &ClientMockSendExpectation{mock: mmSend.mock}
 	}
-	mmSend.defaultExpectation.results = &ClientMockSendResults{rp1, err}
+	mmSend.defaultExpectation.results = &ClientMockSendResults{err}
 	return mmSend.mock
 }
 
 //Set uses given function f to mock the Client.Send method
-func (mmSend *mClientMockSend) Set(f func(ctx context.Context, msg *Message) (rp1 *Response, err error)) *ClientMock {
+func (mmSend *mClientMockSend) Set(f func(ctx context.Context, msg *Message) (err error)) *ClientMock {
 	if mmSend.defaultExpectation != nil {
 		mmSend.mock.t.Fatalf("Default expectation is already set for the Client.Send method")
 	}
@@ -138,13 +137,13 @@ func (mmSend *mClientMockSend) When(ctx context.Context, msg *Message) *ClientMo
 }
 
 // Then sets up Client.Send return parameters for the expectation previously defined by the When method
-func (e *ClientMockSendExpectation) Then(rp1 *Response, err error) *ClientMock {
-	e.results = &ClientMockSendResults{rp1, err}
+func (e *ClientMockSendExpectation) Then(err error) *ClientMock {
+	e.results = &ClientMockSendResults{err}
 	return e.mock
 }
 
 // Send implements Client
-func (mmSend *ClientMock) Send(ctx context.Context, msg *Message) (rp1 *Response, err error) {
+func (mmSend *ClientMock) Send(ctx context.Context, msg *Message) (err error) {
 	mm_atomic.AddUint64(&mmSend.beforeSendCounter, 1)
 	defer mm_atomic.AddUint64(&mmSend.afterSendCounter, 1)
 
@@ -162,7 +161,7 @@ func (mmSend *ClientMock) Send(ctx context.Context, msg *Message) (rp1 *Response
 	for _, e := range mmSend.SendMock.expectations {
 		if minimock.Equal(e.params, mm_params) {
 			mm_atomic.AddUint64(&e.Counter, 1)
-			return e.results.rp1, e.results.err
+			return e.results.err
 		}
 	}
 
@@ -178,7 +177,7 @@ func (mmSend *ClientMock) Send(ctx context.Context, msg *Message) (rp1 *Response
 		if mm_results == nil {
 			mmSend.t.Fatal("No results are set for the ClientMock.Send")
 		}
-		return (*mm_results).rp1, (*mm_results).err
+		return (*mm_results).err
 	}
 	if mmSend.funcSend != nil {
 		return mmSend.funcSend(ctx, msg)

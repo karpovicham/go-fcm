@@ -4,83 +4,76 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/pkg/errors"
 	"github.com/valyala/fasthttp"
-)
-
-var (
-	// DefaultEndpoint contains endpoint URL of FCM service.
-	DefaultEndpoint = []byte("https://fcm.googleapis.com/fcm/send")
-
-	// ErrInvalidAPIKey occurs if API key is not set.
-	ErrInvalidAPIKey = errors.New("client API Key is invalid")
-
-	contentTypeHeader   = []byte("Content-Type")
-	contentTypeHeaderV  = []byte("application/json")
-	authorizationHeader = []byte("Authorization")
+	"golang.org/x/oauth2"
 )
 
 // SimpleClient abstracts the interaction between the application server and the
-// FCM server via HTTP protocol. The developer must obtain an API key from the
-// Google APIs Console page and pass it to the `SimpleClient` so that it can
-// perform authorized requests on the application server's behalf.
-// To send a message to one or more devices use the SimpleClient's Send.
+// FCM server via HTTP protocol.
+// It uses Service Account Private Key for authentication.
 //
 // If the `HTTP` field is nil, a zeroed http.SimpleClient will be allocated and used
 // to send messages.
 type Client interface {
 	// Send sends a message to the FCM server without retrying in case of service
 	// unavailability. A non-nil error is returned if a non-recoverable error
-	// occurs (i.e. if the response status is not "200 OK").
-	Send(ctx context.Context, msg *Message) (*Response, error)
+	// occurs (i.e. if the response status code is not between 200 and 299).
+	Send(ctx context.Context, msg *Message) error
 }
 
-type FastHttpClient interface {
-	Do(req *fasthttp.Request, resp *fasthttp.Response) error
-}
-
-var _ FastHttpClient = &fasthttp.Client{}
+var _ Client = (*SimpleClient)(nil)
 
 type SimpleClient struct {
-	apiKey   []byte
-	client   FastHttpClient
-	endpoint []byte
+	client      FastHTTPDoer
+	url         urlConfig
+	tokenSource oauth2.TokenSource
+	sendPath    []byte
 }
-
-var _ Client = &SimpleClient{}
 
 // NewClient creates new Firebase Cloud Messaging SimpleClient based on API key and
 // with default endpoint and http client.
-func NewClient(apiKey string, opts ...Option) *SimpleClient {
-	if apiKey == "" {
-		panic(ErrInvalidAPIKey)
-	}
-	c := &SimpleClient{
-		apiKey:   []byte("key=" + apiKey),
-		endpoint: DefaultEndpoint,
-		client:   &fasthttp.Client{},
-	}
-	for _, o := range opts {
-		if err := o(c); err != nil {
-			panic(fmt.Sprintf("failed to apply client options: %v", err))
-		}
+func NewClient(serviceAccountJSONData []byte, opts ...Option) *SimpleClient {
+	defaultOpts := []Option{
+		WithEndpoint(DefaultEndpoint),
+		WithCredentialsData(serviceAccountJSONData),
+		WithHTTPClient(DefaultHTTPAdapter),
 	}
 
-	return c
+	opts = append(defaultOpts, opts...)
+	return newClient(opts...)
 }
 
-var (
-	postBytes = []byte("POST")
-)
-
-func (c *SimpleClient) Send(ctx context.Context, msg *Message) (*Response, error) {
-	if err := msg.Validate(); err != nil {
-		return nil, err
+func newClient(opts ...Option) *SimpleClient {
+	c := SimpleClient{
+		tokenSource: &NoopTokenSource{},
 	}
 
-	data, err := msg.MarshalJSON()
+	if err := applyOptions(&c, opts...); err != nil {
+		panic(err)
+	}
+
+	return &c
+}
+
+// Send implementation of Client interface.
+// Docs for the reference: https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages/send
+func (c *SimpleClient) Send(ctx context.Context, msg *Message) error {
+	if err := msg.Validate(); err != nil {
+		return fmt.Errorf("invalid message: %w", err)
+	}
+
+	sendReq := sendRequest{
+		Message: msg,
+	}
+
+	body, err := sendReq.MarshalJSON()
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to marshal msg %#v", *msg)
+		return fmt.Errorf("failed to marshal request body: %w", err)
+	}
+
+	authHeaderValue, err := c.authHeaderValue()
+	if err != nil {
+		return err
 	}
 
 	req := fasthttp.AcquireRequest()
@@ -89,22 +82,35 @@ func (c *SimpleClient) Send(ctx context.Context, msg *Message) (*Response, error
 	resp := fasthttp.AcquireResponse()
 	defer fasthttp.ReleaseResponse(resp)
 
-	req.Header.SetMethodBytes(postBytes)
-	req.Header.SetRequestURIBytes(c.endpoint)
-	req.Header.AddBytesKV(contentTypeHeader, contentTypeHeaderV)
-	req.Header.AddBytesKV(authorizationHeader, c.apiKey)
-	req.SetBody(data)
+	req.Header.SetMethod(fasthttp.MethodPost)
+	uri := req.URI()
+	uri.SetSchemeBytes(c.url.Scheme)
+	uri.SetHostBytes(c.url.Host)
+	uri.SetPathBytes(c.sendPath)
+	req.Header.SetBytesKV(contentTypeHeader, contentTypeHeaderV)
+	req.Header.SetBytesKV(authorizationHeader, authHeaderValue)
+	req.SetBody(body)
 
-	if err := c.client.Do(req, resp); err != nil {
-		return nil, errors.Wrapf(err, "failed to do http request")
+	if err := c.client.Do(ctx, req, resp); err != nil {
+		return fmt.Errorf("failed to perform request: %w", err)
 	}
 
-	response := new(Response)
-	response.StatusCode = resp.StatusCode()
-	respBody := resp.Body()
-	if err := response.UnmarshalJSON(respBody); err != nil {
-		return nil, errors.Wrapf(err, "failed to unmarshal response %s", string(respBody))
+	statusCode := resp.StatusCode()
+	if statusCode >= 200 && statusCode <= 299 {
+		return nil
 	}
 
-	return response, nil
+	return fmt.Errorf("unexpected status code: %d: %q", statusCode, string(resp.Body()))
+}
+
+func (c *SimpleClient) authHeaderValue() ([]byte, error) {
+	// TODO: consider to regenerate this value only when token is expired
+	//  e.g. cache and reuse if not expired
+	token, err := c.tokenSource.Token()
+	if err != nil {
+		return nil, fmt.Errorf("failed to grab oauth2 token: %w", err)
+	}
+
+	headerValue := token.Type() + " " + token.AccessToken
+	return []byte(headerValue), nil
 }

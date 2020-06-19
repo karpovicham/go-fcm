@@ -1,9 +1,8 @@
 package fcm
 
 import (
+	"errors"
 	"strings"
-
-	"github.com/pkg/errors"
 )
 
 var (
@@ -17,6 +16,7 @@ var (
 // Message represents list of targets, options, and payload for HTTP JSON
 // messages.
 // See https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#resource:-message
+// easyjson:json
 type Message struct {
 	Name         string            `json:"name,omitempty"`
 	Data         map[string]string `json:"data,omitempty"`
@@ -27,6 +27,20 @@ type Message struct {
 	Token     string `json:"token,omitempty"`
 	Topic     string `json:"topic,omitempty"`
 	Condition string `json:"condition,omitempty"`
+}
+
+// Validate returns an error if the message is not well-formed.
+func (msg *Message) Validate() error {
+	if msg == nil {
+		return ErrInvalidMessage
+	}
+
+	// validate target identifier: `to` or `condition`, or `registration_ids`
+	opCnt := strings.Count(msg.Condition, "&&") + strings.Count(msg.Condition, "||")
+	if msg.Token == "" && (msg.Condition == "" || opCnt > 2) && len(msg.Topic) == 0 {
+		return ErrInvalidTarget
+	}
+	return nil
 }
 
 // See https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#Notification
@@ -44,6 +58,8 @@ type AndroidConfig struct {
 	RestrictedPackageName string                 `json:"restricted_package_name,omitempty"`
 	Data                  map[string]string      `json:"data,omitempty"`
 	Notification          *AndroidNotification   `json:"notification,omitempty"`
+	FCMOptions            *AndroidFCMOptions     `json:"fcm_options,omitempty"`
+	DirectBootOk          bool                   `json:"direct_boot_ok,omitempty"`
 }
 
 // Notification specifies the predefined, user-visible key-value pairs of the
@@ -85,7 +101,7 @@ type Color struct {
 }
 
 type LightSettings struct {
-	Color            Color
+	Color            Color  `json:"color"`
 	LightOnDuration  string `json:"light_on_duration,omitempty"`
 	LightOffDuration string `json:"light_off_duration,omitempty"`
 }
@@ -112,16 +128,7 @@ const (
 	AndroidMessagePriorityHigh   AndroidMessagePriority = "HIGH"
 )
 
-// Validate returns an error if the message is not well-formed.
-func (msg *Message) Validate() error {
-	if msg == nil {
-		return ErrInvalidMessage
-	}
-
-	// validate target identifier: `to` or `condition`, or `registration_ids`
-	opCnt := strings.Count(msg.Condition, "&&") + strings.Count(msg.Condition, "||")
-	if msg.Token == "" && (msg.Condition == "" || opCnt > 2) && len(msg.Topic) == 0 {
-		return ErrInvalidTarget
-	}
-	return nil
+// AndroidFCMOptions contains additional options for features provided by the FCM Android SDK.
+type AndroidFCMOptions struct {
+	AnalyticsLabel string `json:"analytics_label,omitempty"`
 }

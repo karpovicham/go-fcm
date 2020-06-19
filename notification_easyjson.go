@@ -17,98 +17,7 @@ var (
 	_ easyjson.Marshaler
 )
 
-func easyjson9806e1DecodeGithubComHumansNetFcm(in *jlexer.Lexer, out *Notification) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
-		in.Skip()
-		return
-	}
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeString()
-		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
-		switch key {
-		case "title":
-			out.Title = string(in.String())
-		case "body":
-			out.Body = string(in.String())
-		case "image":
-			out.Image = string(in.String())
-		default:
-			in.SkipRecursive()
-		}
-		in.WantComma()
-	}
-	in.Delim('}')
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjson9806e1EncodeGithubComHumansNetFcm(out *jwriter.Writer, in Notification) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	if in.Title != "" {
-		const prefix string = ",\"title\":"
-		first = false
-		out.RawString(prefix[1:])
-		out.String(string(in.Title))
-	}
-	if in.Body != "" {
-		const prefix string = ",\"body\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.Body))
-	}
-	if in.Image != "" {
-		const prefix string = ",\"image\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.Image))
-	}
-	out.RawByte('}')
-}
-
-// MarshalJSON supports json.Marshaler interface
-func (v Notification) MarshalJSON() ([]byte, error) {
-	w := jwriter.Writer{}
-	easyjson9806e1EncodeGithubComHumansNetFcm(&w, v)
-	return w.Buffer.BuildBytes(), w.Error
-}
-
-// MarshalEasyJSON supports easyjson.Marshaler interface
-func (v Notification) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson9806e1EncodeGithubComHumansNetFcm(w, v)
-}
-
-// UnmarshalJSON supports json.Unmarshaler interface
-func (v *Notification) UnmarshalJSON(data []byte) error {
-	r := jlexer.Lexer{Data: data}
-	easyjson9806e1DecodeGithubComHumansNetFcm(&r, v)
-	return r.Error()
-}
-
-// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
-func (v *Notification) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson9806e1DecodeGithubComHumansNetFcm(l, v)
-}
-func easyjson9806e1DecodeGithubComHumansNetFcm1(in *jlexer.Lexer, out *Message) {
+func easyjson9806e1DecodeGithubComHumansNetFcm(in *jlexer.Lexer, out *Message) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -157,7 +66,7 @@ func easyjson9806e1DecodeGithubComHumansNetFcm1(in *jlexer.Lexer, out *Message) 
 				if out.Notification == nil {
 					out.Notification = new(Notification)
 				}
-				(*out.Notification).UnmarshalEasyJSON(in)
+				easyjson9806e1DecodeGithubComHumansNetFcm1(in, out.Notification)
 			}
 		case "android":
 			if in.IsNull() {
@@ -167,7 +76,7 @@ func easyjson9806e1DecodeGithubComHumansNetFcm1(in *jlexer.Lexer, out *Message) 
 				if out.Android == nil {
 					out.Android = new(AndroidConfig)
 				}
-				(*out.Android).UnmarshalEasyJSON(in)
+				easyjson9806e1DecodeGithubComHumansNetFcm2(in, out.Android)
 			}
 		case "token":
 			out.Token = string(in.String())
@@ -185,7 +94,7 @@ func easyjson9806e1DecodeGithubComHumansNetFcm1(in *jlexer.Lexer, out *Message) 
 		in.Consumed()
 	}
 }
-func easyjson9806e1EncodeGithubComHumansNetFcm1(out *jwriter.Writer, in Message) {
+func easyjson9806e1EncodeGithubComHumansNetFcm(out *jwriter.Writer, in Message) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -227,7 +136,7 @@ func easyjson9806e1EncodeGithubComHumansNetFcm1(out *jwriter.Writer, in Message)
 		} else {
 			out.RawString(prefix)
 		}
-		(*in.Notification).MarshalEasyJSON(out)
+		easyjson9806e1EncodeGithubComHumansNetFcm1(out, *in.Notification)
 	}
 	if in.Android != nil {
 		const prefix string = ",\"android\":"
@@ -237,7 +146,7 @@ func easyjson9806e1EncodeGithubComHumansNetFcm1(out *jwriter.Writer, in Message)
 		} else {
 			out.RawString(prefix)
 		}
-		(*in.Android).MarshalEasyJSON(out)
+		easyjson9806e1EncodeGithubComHumansNetFcm2(out, *in.Android)
 	}
 	if in.Token != "" {
 		const prefix string = ",\"token\":"
@@ -275,27 +184,27 @@ func easyjson9806e1EncodeGithubComHumansNetFcm1(out *jwriter.Writer, in Message)
 // MarshalJSON supports json.Marshaler interface
 func (v Message) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson9806e1EncodeGithubComHumansNetFcm1(&w, v)
+	easyjson9806e1EncodeGithubComHumansNetFcm(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Message) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson9806e1EncodeGithubComHumansNetFcm1(w, v)
+	easyjson9806e1EncodeGithubComHumansNetFcm(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *Message) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson9806e1DecodeGithubComHumansNetFcm1(&r, v)
+	easyjson9806e1DecodeGithubComHumansNetFcm(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Message) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson9806e1DecodeGithubComHumansNetFcm1(l, v)
+	easyjson9806e1DecodeGithubComHumansNetFcm(l, v)
 }
-func easyjson9806e1DecodeGithubComHumansNetFcm2(in *jlexer.Lexer, out *LightSettings) {
+func easyjson9806e1DecodeGithubComHumansNetFcm2(in *jlexer.Lexer, out *AndroidConfig) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -314,12 +223,56 @@ func easyjson9806e1DecodeGithubComHumansNetFcm2(in *jlexer.Lexer, out *LightSett
 			continue
 		}
 		switch key {
-		case "Color":
-			(out.Color).UnmarshalEasyJSON(in)
-		case "light_on_duration":
-			out.LightOnDuration = string(in.String())
-		case "light_off_duration":
-			out.LightOffDuration = string(in.String())
+		case "collapse_key":
+			out.CollapseKey = string(in.String())
+		case "priority":
+			out.Priority = AndroidMessagePriority(in.String())
+		case "ttl":
+			out.Ttl = string(in.String())
+		case "restricted_package_name":
+			out.RestrictedPackageName = string(in.String())
+		case "data":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				in.Delim('{')
+				if !in.IsDelim('}') {
+					out.Data = make(map[string]string)
+				} else {
+					out.Data = nil
+				}
+				for !in.IsDelim('}') {
+					key := string(in.String())
+					in.WantColon()
+					var v3 string
+					v3 = string(in.String())
+					(out.Data)[key] = v3
+					in.WantComma()
+				}
+				in.Delim('}')
+			}
+		case "notification":
+			if in.IsNull() {
+				in.Skip()
+				out.Notification = nil
+			} else {
+				if out.Notification == nil {
+					out.Notification = new(AndroidNotification)
+				}
+				easyjson9806e1DecodeGithubComHumansNetFcm3(in, out.Notification)
+			}
+		case "fcm_options":
+			if in.IsNull() {
+				in.Skip()
+				out.FCMOptions = nil
+			} else {
+				if out.FCMOptions == nil {
+					out.FCMOptions = new(AndroidFCMOptions)
+				}
+				easyjson9806e1DecodeGithubComHumansNetFcm4(in, out.FCMOptions)
+			}
+		case "direct_boot_ok":
+			out.DirectBootOk = bool(in.Bool())
 		default:
 			in.SkipRecursive()
 		}
@@ -330,155 +283,146 @@ func easyjson9806e1DecodeGithubComHumansNetFcm2(in *jlexer.Lexer, out *LightSett
 		in.Consumed()
 	}
 }
-func easyjson9806e1EncodeGithubComHumansNetFcm2(out *jwriter.Writer, in LightSettings) {
+func easyjson9806e1EncodeGithubComHumansNetFcm2(out *jwriter.Writer, in AndroidConfig) {
 	out.RawByte('{')
 	first := true
 	_ = first
-	{
-		const prefix string = ",\"Color\":"
-		out.RawString(prefix[1:])
-		(in.Color).MarshalEasyJSON(out)
-	}
-	if in.LightOnDuration != "" {
-		const prefix string = ",\"light_on_duration\":"
-		out.RawString(prefix)
-		out.String(string(in.LightOnDuration))
-	}
-	if in.LightOffDuration != "" {
-		const prefix string = ",\"light_off_duration\":"
-		out.RawString(prefix)
-		out.String(string(in.LightOffDuration))
-	}
-	out.RawByte('}')
-}
-
-// MarshalJSON supports json.Marshaler interface
-func (v LightSettings) MarshalJSON() ([]byte, error) {
-	w := jwriter.Writer{}
-	easyjson9806e1EncodeGithubComHumansNetFcm2(&w, v)
-	return w.Buffer.BuildBytes(), w.Error
-}
-
-// MarshalEasyJSON supports easyjson.Marshaler interface
-func (v LightSettings) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson9806e1EncodeGithubComHumansNetFcm2(w, v)
-}
-
-// UnmarshalJSON supports json.Unmarshaler interface
-func (v *LightSettings) UnmarshalJSON(data []byte) error {
-	r := jlexer.Lexer{Data: data}
-	easyjson9806e1DecodeGithubComHumansNetFcm2(&r, v)
-	return r.Error()
-}
-
-// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
-func (v *LightSettings) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson9806e1DecodeGithubComHumansNetFcm2(l, v)
-}
-func easyjson9806e1DecodeGithubComHumansNetFcm3(in *jlexer.Lexer, out *Color) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
-		in.Skip()
-		return
-	}
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeString()
-		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
-		switch key {
-		case "red":
-			out.Red = float32(in.Float32())
-		case "green":
-			out.Green = float32(in.Float32())
-		case "blue":
-			out.Blue = float32(in.Float32())
-		case "alpha":
-			out.Alpha = float32(in.Float32())
-		default:
-			in.SkipRecursive()
-		}
-		in.WantComma()
-	}
-	in.Delim('}')
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjson9806e1EncodeGithubComHumansNetFcm3(out *jwriter.Writer, in Color) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	if in.Red != 0 {
-		const prefix string = ",\"red\":"
+	if in.CollapseKey != "" {
+		const prefix string = ",\"collapse_key\":"
 		first = false
 		out.RawString(prefix[1:])
-		out.Float32(float32(in.Red))
+		out.String(string(in.CollapseKey))
 	}
-	if in.Green != 0 {
-		const prefix string = ",\"green\":"
+	if in.Priority != "" {
+		const prefix string = ",\"priority\":"
 		if first {
 			first = false
 			out.RawString(prefix[1:])
 		} else {
 			out.RawString(prefix)
 		}
-		out.Float32(float32(in.Green))
+		out.String(string(in.Priority))
 	}
-	if in.Blue != 0 {
-		const prefix string = ",\"blue\":"
+	if in.Ttl != "" {
+		const prefix string = ",\"ttl\":"
 		if first {
 			first = false
 			out.RawString(prefix[1:])
 		} else {
 			out.RawString(prefix)
 		}
-		out.Float32(float32(in.Blue))
+		out.String(string(in.Ttl))
 	}
-	if in.Alpha != 0 {
-		const prefix string = ",\"alpha\":"
+	if in.RestrictedPackageName != "" {
+		const prefix string = ",\"restricted_package_name\":"
 		if first {
 			first = false
 			out.RawString(prefix[1:])
 		} else {
 			out.RawString(prefix)
 		}
-		out.Float32(float32(in.Alpha))
+		out.String(string(in.RestrictedPackageName))
+	}
+	if len(in.Data) != 0 {
+		const prefix string = ",\"data\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		{
+			out.RawByte('{')
+			v4First := true
+			for v4Name, v4Value := range in.Data {
+				if v4First {
+					v4First = false
+				} else {
+					out.RawByte(',')
+				}
+				out.String(string(v4Name))
+				out.RawByte(':')
+				out.String(string(v4Value))
+			}
+			out.RawByte('}')
+		}
+	}
+	if in.Notification != nil {
+		const prefix string = ",\"notification\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		easyjson9806e1EncodeGithubComHumansNetFcm3(out, *in.Notification)
+	}
+	if in.FCMOptions != nil {
+		const prefix string = ",\"fcm_options\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		easyjson9806e1EncodeGithubComHumansNetFcm4(out, *in.FCMOptions)
+	}
+	if in.DirectBootOk {
+		const prefix string = ",\"direct_boot_ok\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Bool(bool(in.DirectBootOk))
 	}
 	out.RawByte('}')
 }
-
-// MarshalJSON supports json.Marshaler interface
-func (v Color) MarshalJSON() ([]byte, error) {
-	w := jwriter.Writer{}
-	easyjson9806e1EncodeGithubComHumansNetFcm3(&w, v)
-	return w.Buffer.BuildBytes(), w.Error
+func easyjson9806e1DecodeGithubComHumansNetFcm4(in *jlexer.Lexer, out *AndroidFCMOptions) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeString()
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "analytics_label":
+			out.AnalyticsLabel = string(in.String())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
 }
-
-// MarshalEasyJSON supports easyjson.Marshaler interface
-func (v Color) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson9806e1EncodeGithubComHumansNetFcm3(w, v)
+func easyjson9806e1EncodeGithubComHumansNetFcm4(out *jwriter.Writer, in AndroidFCMOptions) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	if in.AnalyticsLabel != "" {
+		const prefix string = ",\"analytics_label\":"
+		first = false
+		out.RawString(prefix[1:])
+		out.String(string(in.AnalyticsLabel))
+	}
+	out.RawByte('}')
 }
-
-// UnmarshalJSON supports json.Unmarshaler interface
-func (v *Color) UnmarshalJSON(data []byte) error {
-	r := jlexer.Lexer{Data: data}
-	easyjson9806e1DecodeGithubComHumansNetFcm3(&r, v)
-	return r.Error()
-}
-
-// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
-func (v *Color) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson9806e1DecodeGithubComHumansNetFcm3(l, v)
-}
-func easyjson9806e1DecodeGithubComHumansNetFcm4(in *jlexer.Lexer, out *AndroidNotification) {
+func easyjson9806e1DecodeGithubComHumansNetFcm3(in *jlexer.Lexer, out *AndroidNotification) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -529,9 +473,9 @@ func easyjson9806e1DecodeGithubComHumansNetFcm4(in *jlexer.Lexer, out *AndroidNo
 					out.BodyLocArgs = (out.BodyLocArgs)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v3 string
-					v3 = string(in.String())
-					out.BodyLocArgs = append(out.BodyLocArgs, v3)
+					var v5 string
+					v5 = string(in.String())
+					out.BodyLocArgs = append(out.BodyLocArgs, v5)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -554,9 +498,9 @@ func easyjson9806e1DecodeGithubComHumansNetFcm4(in *jlexer.Lexer, out *AndroidNo
 					out.TitleLocArgs = (out.TitleLocArgs)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v4 string
-					v4 = string(in.String())
-					out.TitleLocArgs = append(out.TitleLocArgs, v4)
+					var v6 string
+					v6 = string(in.String())
+					out.TitleLocArgs = append(out.TitleLocArgs, v6)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -595,9 +539,9 @@ func easyjson9806e1DecodeGithubComHumansNetFcm4(in *jlexer.Lexer, out *AndroidNo
 					out.VibrateTimings = (out.VibrateTimings)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v5 string
-					v5 = string(in.String())
-					out.VibrateTimings = append(out.VibrateTimings, v5)
+					var v7 string
+					v7 = string(in.String())
+					out.VibrateTimings = append(out.VibrateTimings, v7)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -614,7 +558,7 @@ func easyjson9806e1DecodeGithubComHumansNetFcm4(in *jlexer.Lexer, out *AndroidNo
 				if out.LightSettings == nil {
 					out.LightSettings = new(LightSettings)
 				}
-				(*out.LightSettings).UnmarshalEasyJSON(in)
+				easyjson9806e1DecodeGithubComHumansNetFcm5(in, out.LightSettings)
 			}
 		case "image":
 			out.Image = string(in.String())
@@ -628,7 +572,7 @@ func easyjson9806e1DecodeGithubComHumansNetFcm4(in *jlexer.Lexer, out *AndroidNo
 		in.Consumed()
 	}
 }
-func easyjson9806e1EncodeGithubComHumansNetFcm4(out *jwriter.Writer, in AndroidNotification) {
+func easyjson9806e1EncodeGithubComHumansNetFcm3(out *jwriter.Writer, in AndroidNotification) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -718,11 +662,11 @@ func easyjson9806e1EncodeGithubComHumansNetFcm4(out *jwriter.Writer, in AndroidN
 		}
 		{
 			out.RawByte('[')
-			for v6, v7 := range in.BodyLocArgs {
-				if v6 > 0 {
+			for v8, v9 := range in.BodyLocArgs {
+				if v8 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v7))
+				out.String(string(v9))
 			}
 			out.RawByte(']')
 		}
@@ -747,11 +691,11 @@ func easyjson9806e1EncodeGithubComHumansNetFcm4(out *jwriter.Writer, in AndroidN
 		}
 		{
 			out.RawByte('[')
-			for v8, v9 := range in.TitleLocArgs {
-				if v8 > 0 {
+			for v10, v11 := range in.TitleLocArgs {
+				if v10 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v9))
+				out.String(string(v11))
 			}
 			out.RawByte(']')
 		}
@@ -856,11 +800,11 @@ func easyjson9806e1EncodeGithubComHumansNetFcm4(out *jwriter.Writer, in AndroidN
 		}
 		{
 			out.RawByte('[')
-			for v10, v11 := range in.VibrateTimings {
-				if v10 > 0 {
+			for v12, v13 := range in.VibrateTimings {
+				if v12 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v11))
+				out.String(string(v13))
 			}
 			out.RawByte(']')
 		}
@@ -893,7 +837,7 @@ func easyjson9806e1EncodeGithubComHumansNetFcm4(out *jwriter.Writer, in AndroidN
 		} else {
 			out.RawString(prefix)
 		}
-		(*in.LightSettings).MarshalEasyJSON(out)
+		easyjson9806e1EncodeGithubComHumansNetFcm5(out, *in.LightSettings)
 	}
 	if in.Image != "" {
 		const prefix string = ",\"image\":"
@@ -907,31 +851,7 @@ func easyjson9806e1EncodeGithubComHumansNetFcm4(out *jwriter.Writer, in AndroidN
 	}
 	out.RawByte('}')
 }
-
-// MarshalJSON supports json.Marshaler interface
-func (v AndroidNotification) MarshalJSON() ([]byte, error) {
-	w := jwriter.Writer{}
-	easyjson9806e1EncodeGithubComHumansNetFcm4(&w, v)
-	return w.Buffer.BuildBytes(), w.Error
-}
-
-// MarshalEasyJSON supports easyjson.Marshaler interface
-func (v AndroidNotification) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson9806e1EncodeGithubComHumansNetFcm4(w, v)
-}
-
-// UnmarshalJSON supports json.Unmarshaler interface
-func (v *AndroidNotification) UnmarshalJSON(data []byte) error {
-	r := jlexer.Lexer{Data: data}
-	easyjson9806e1DecodeGithubComHumansNetFcm4(&r, v)
-	return r.Error()
-}
-
-// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
-func (v *AndroidNotification) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson9806e1DecodeGithubComHumansNetFcm4(l, v)
-}
-func easyjson9806e1DecodeGithubComHumansNetFcm5(in *jlexer.Lexer, out *AndroidConfig) {
+func easyjson9806e1DecodeGithubComHumansNetFcm5(in *jlexer.Lexer, out *LightSettings) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -950,44 +870,12 @@ func easyjson9806e1DecodeGithubComHumansNetFcm5(in *jlexer.Lexer, out *AndroidCo
 			continue
 		}
 		switch key {
-		case "collapse_key":
-			out.CollapseKey = string(in.String())
-		case "priority":
-			out.Priority = AndroidMessagePriority(in.String())
-		case "ttl":
-			out.Ttl = string(in.String())
-		case "restricted_package_name":
-			out.RestrictedPackageName = string(in.String())
-		case "data":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				in.Delim('{')
-				if !in.IsDelim('}') {
-					out.Data = make(map[string]string)
-				} else {
-					out.Data = nil
-				}
-				for !in.IsDelim('}') {
-					key := string(in.String())
-					in.WantColon()
-					var v12 string
-					v12 = string(in.String())
-					(out.Data)[key] = v12
-					in.WantComma()
-				}
-				in.Delim('}')
-			}
-		case "notification":
-			if in.IsNull() {
-				in.Skip()
-				out.Notification = nil
-			} else {
-				if out.Notification == nil {
-					out.Notification = new(AndroidNotification)
-				}
-				(*out.Notification).UnmarshalEasyJSON(in)
-			}
+		case "color":
+			easyjson9806e1DecodeGithubComHumansNetFcm6(in, &out.Color)
+		case "light_on_duration":
+			out.LightOnDuration = string(in.String())
+		case "light_off_duration":
+			out.LightOffDuration = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -998,103 +886,170 @@ func easyjson9806e1DecodeGithubComHumansNetFcm5(in *jlexer.Lexer, out *AndroidCo
 		in.Consumed()
 	}
 }
-func easyjson9806e1EncodeGithubComHumansNetFcm5(out *jwriter.Writer, in AndroidConfig) {
+func easyjson9806e1EncodeGithubComHumansNetFcm5(out *jwriter.Writer, in LightSettings) {
 	out.RawByte('{')
 	first := true
 	_ = first
-	if in.CollapseKey != "" {
-		const prefix string = ",\"collapse_key\":"
-		first = false
+	{
+		const prefix string = ",\"color\":"
 		out.RawString(prefix[1:])
-		out.String(string(in.CollapseKey))
+		easyjson9806e1EncodeGithubComHumansNetFcm6(out, in.Color)
 	}
-	if in.Priority != "" {
-		const prefix string = ",\"priority\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.Priority))
+	if in.LightOnDuration != "" {
+		const prefix string = ",\"light_on_duration\":"
+		out.RawString(prefix)
+		out.String(string(in.LightOnDuration))
 	}
-	if in.Ttl != "" {
-		const prefix string = ",\"ttl\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.Ttl))
-	}
-	if in.RestrictedPackageName != "" {
-		const prefix string = ",\"restricted_package_name\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.RestrictedPackageName))
-	}
-	if len(in.Data) != 0 {
-		const prefix string = ",\"data\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		{
-			out.RawByte('{')
-			v13First := true
-			for v13Name, v13Value := range in.Data {
-				if v13First {
-					v13First = false
-				} else {
-					out.RawByte(',')
-				}
-				out.String(string(v13Name))
-				out.RawByte(':')
-				out.String(string(v13Value))
-			}
-			out.RawByte('}')
-		}
-	}
-	if in.Notification != nil {
-		const prefix string = ",\"notification\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		(*in.Notification).MarshalEasyJSON(out)
+	if in.LightOffDuration != "" {
+		const prefix string = ",\"light_off_duration\":"
+		out.RawString(prefix)
+		out.String(string(in.LightOffDuration))
 	}
 	out.RawByte('}')
 }
-
-// MarshalJSON supports json.Marshaler interface
-func (v AndroidConfig) MarshalJSON() ([]byte, error) {
-	w := jwriter.Writer{}
-	easyjson9806e1EncodeGithubComHumansNetFcm5(&w, v)
-	return w.Buffer.BuildBytes(), w.Error
+func easyjson9806e1DecodeGithubComHumansNetFcm6(in *jlexer.Lexer, out *Color) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeString()
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "red":
+			out.Red = float32(in.Float32())
+		case "green":
+			out.Green = float32(in.Float32())
+		case "blue":
+			out.Blue = float32(in.Float32())
+		case "alpha":
+			out.Alpha = float32(in.Float32())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
 }
-
-// MarshalEasyJSON supports easyjson.Marshaler interface
-func (v AndroidConfig) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson9806e1EncodeGithubComHumansNetFcm5(w, v)
+func easyjson9806e1EncodeGithubComHumansNetFcm6(out *jwriter.Writer, in Color) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	if in.Red != 0 {
+		const prefix string = ",\"red\":"
+		first = false
+		out.RawString(prefix[1:])
+		out.Float32(float32(in.Red))
+	}
+	if in.Green != 0 {
+		const prefix string = ",\"green\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Float32(float32(in.Green))
+	}
+	if in.Blue != 0 {
+		const prefix string = ",\"blue\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Float32(float32(in.Blue))
+	}
+	if in.Alpha != 0 {
+		const prefix string = ",\"alpha\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Float32(float32(in.Alpha))
+	}
+	out.RawByte('}')
 }
-
-// UnmarshalJSON supports json.Unmarshaler interface
-func (v *AndroidConfig) UnmarshalJSON(data []byte) error {
-	r := jlexer.Lexer{Data: data}
-	easyjson9806e1DecodeGithubComHumansNetFcm5(&r, v)
-	return r.Error()
+func easyjson9806e1DecodeGithubComHumansNetFcm1(in *jlexer.Lexer, out *Notification) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeString()
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "title":
+			out.Title = string(in.String())
+		case "body":
+			out.Body = string(in.String())
+		case "image":
+			out.Image = string(in.String())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
 }
-
-// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
-func (v *AndroidConfig) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson9806e1DecodeGithubComHumansNetFcm5(l, v)
+func easyjson9806e1EncodeGithubComHumansNetFcm1(out *jwriter.Writer, in Notification) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	if in.Title != "" {
+		const prefix string = ",\"title\":"
+		first = false
+		out.RawString(prefix[1:])
+		out.String(string(in.Title))
+	}
+	if in.Body != "" {
+		const prefix string = ",\"body\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Body))
+	}
+	if in.Image != "" {
+		const prefix string = ",\"image\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.Image))
+	}
+	out.RawByte('}')
 }

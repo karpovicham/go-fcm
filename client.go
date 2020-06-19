@@ -55,6 +55,8 @@ func newClient(opts ...Option) *SimpleClient {
 	return &c
 }
 
+// Send implementation of Client interface.
+// Docs for the reference: https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages/send
 func (c *SimpleClient) Send(ctx context.Context, msg *Message) error {
 	if err := msg.Validate(); err != nil {
 		return fmt.Errorf("invalid message: %w", err)

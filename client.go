@@ -17,7 +17,7 @@ import (
 type Client interface {
 	// Send sends a message to the FCM server without retrying in case of service
 	// unavailability. A non-nil error is returned if a non-recoverable error
-	// occurs (i.e. if the response status code is not between 200 and 299).
+	// occurs (i.e. if the sendResponse status code is not between 200 and 299).
 	Send(ctx context.Context, msg *Message) error
 }
 
@@ -95,12 +95,7 @@ func (c *SimpleClient) Send(ctx context.Context, msg *Message) error {
 		return fmt.Errorf("failed to perform request: %w", err)
 	}
 
-	statusCode := resp.StatusCode()
-	if statusCode >= 200 && statusCode <= 299 {
-		return nil
-	}
-
-	return fmt.Errorf("unexpected status code: %d: %q", statusCode, string(resp.Body()))
+	return handleResponse(resp.StatusCode(), resp.Body())
 }
 
 func (c *SimpleClient) authHeaderValue() ([]byte, error) {
@@ -113,4 +108,42 @@ func (c *SimpleClient) authHeaderValue() ([]byte, error) {
 
 	headerValue := token.Type() + " " + token.AccessToken
 	return []byte(headerValue), nil
+}
+
+// Handle sendResponse
+func handleResponse(statusCode int, respBody []byte) error {
+	// Success sendResponse
+	if statusCode >= 200 && statusCode <= 299 {
+		return nil
+	}
+
+	var resp sendResponse
+	if err := resp.UnmarshalJSON(respBody); err != nil {
+		return fmt.Errorf("unmarshal sendResponse with status code %d: %w", statusCode, err)
+	}
+
+	// In case if error sendResponse is not like we expect.
+	if resp.Error == nil {
+		return fmt.Errorf("empty error in sendResponse for status code %d: %s", statusCode, string(respBody))
+	}
+
+	// Extract errorCode of google.firebase.fcm type.
+	// Details could be different types of structs
+	// and some of the errorDetails elements could not have ErrorCode.
+	var errCode errorCode
+	if len(resp.Error.Details) > 0 {
+		for _, detail := range resp.Error.Details {
+			if detail.ErrorCode != "" {
+				errCode = detail.ErrorCode
+				break
+			}
+		}
+	}
+
+	switch errCode {
+	case errorCodeUnregistered:
+		return ErrUnregistered
+	default:
+		return fmt.Errorf("unsuccessful sendResponse with status code: %d: %s", statusCode, string(respBody))
+	}
 }
